@@ -1,0 +1,10 @@
+'use client'
+import {useState} from 'react'
+import {createClient} from '@/lib/supabase'
+import {useRouter} from 'next/navigation'
+
+export default function Submit(){
+ const supabase=createClient(); const router=useRouter(); const [title,setTitle]=useState(''); const [description,setDescription]=useState(''); const [busy,setBusy]=useState(false); const [message,setMessage]=useState('')
+ async function submit(e:React.FormEvent){e.preventDefault();setBusy(true);setMessage('');const {data:{user}}=await supabase.auth.getUser();if(!user){router.push('/login');return} const r=await fetch('/api/submissions',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({title,description})});const j=await r.json();setBusy(false);if(!r.ok){setMessage(j.error||'Something went wrong');return}setMessage('Submission received. The inspection queue will prepare your checklist and report.');setTitle('');setDescription('')}
+ return <main className="shell"><nav className="nav"><div className="brand">DIGITAL <span>SALVAGE</span></div><a href="/seller">Seller dashboard</a></nav><section className="card wide"><div className="eyebrow">NEW SUBMISSION</div><h1>Tell us what you have.</h1><p className="muted">Use normal words. You do not need to know the correct category or file format.</p><form onSubmit={submit}><label>Short title<input required value={title} onChange={e=>setTitle(e.target.value)} placeholder="Example: Editable game UI pack"/></label><label>Brief explanation<textarea required value={description} onChange={e=>setDescription(e.target.value)} rows={7} placeholder="What is it? What is included? How does someone use it? Anything you know about ownership or license..."/></label><div className="helper">After this, the system decides the likely category and what evidence/assets are needed. You can also submit everything you have if the suggested format does not fit.</div><button className="primary" disabled={busy}>{busy?'Sending…':'Continue →'}</button>{message&&<div className="notice">{message}</div>}</form></section></main>
+}
