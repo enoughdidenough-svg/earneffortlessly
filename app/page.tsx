@@ -1,2 +1,18 @@
-import Link from 'next/link'; import {createServerSupabase} from '@/lib/supabase';
-export default async function Home(){const s=await createServerSupabase();const {data:products}=await s.from('products').select('id,title,description,category,price,currency').eq('status','active').order('created_at',{ascending:false}).limit(6);return <main><section className="container hero"><span className="badge">Digital goods marketplace</span><h1>Buy, sell and deliver digital goods.</h1><p className="muted">A clean marketplace backed by Supabase, with accounts, listings, orders and admin controls.</p><div className="row"><Link className="btn" href="/marketplace">Explore marketplace</Link><Link className="btn secondary" href="/register">Become a seller</Link></div></section><section className="container"><h2>Latest listings</h2><div className="grid grid3">{(products||[]).map(p=><Link className="card" href={`/product/${p.id}`} key={p.id}><span className="badge">{p.category}</span><h3>{p.title}</h3><p className="muted">{(p.description||'').slice(0,120)}</p><div className="price">{p.currency} {p.price}</div></Link>)}</div>{(!products||products.length===0)&&<div className="notice">No listings yet. Create the first one from the Seller page.</div>}</section></main>}
+import Link from 'next/link'
+
+const features = [
+  ['01','Describe','Tell the system what you want to sell in your own words.'],
+  ['02','Prepare','The submission assistant explains exactly what to provide, with an all-items fallback.'],
+  ['03','Inspect','Automated checks queue the content for safety, quality, completeness and duplication review.'],
+  ['04','Approve','You receive the short report and decide the final price, royalty and publication.'],
+]
+
+export default function Home(){
+ return <main className="shell">
+  <nav className="nav"><div className="brand">DIGITAL <span>SALVAGE</span></div><div className="navlinks"><Link href="/marketplace">Browse</Link><Link href="/login">Sign in</Link><Link className="pill" href="/register">Join</Link></div></nav>
+  <section className="hero"><div className="eyebrow">SELLER-FIRST • CLOUD • SAFETY GATED</div><h1>Turn unused digital work into a <em>real listing.</em></h1><p>Describe it. Submit it. Our inspection pipeline organizes the details, checks the submission, and prepares a simple report for approval.</p><div className="actions"><Link className="primary" href="/seller/submit">Start a submission →</Link><Link className="secondary" href="/how-it-works">How it works</Link></div></section>
+  <section className="steps">{features.map(([n,t,d])=><article key={n}><small>{n}</small><h3>{t}</h3><p>{d}</p></article>)}</section>
+  <section className="notice"><div><strong>Nothing goes public automatically.</strong><span>Automated inspection prepares evidence; the admin approval gate controls publication and final pricing.</span></div><Link href="/seller/submit">Submit content</Link></section>
+  <footer>Digital Salvage · lawful digital goods only · privacy · terms · seller rules</footer>
+ </main>
+}
