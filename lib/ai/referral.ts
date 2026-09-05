@@ -1,0 +1,2 @@
+export const REFERRAL_RULES={referredSellerBonusPercent:5,bonusSubmissionCountPerMonth:5,referrerLifetimePercent:2} as const;
+export function getReferralBenefits(submissionsThisMonth:number){return {sellerBonusEligible:submissionsThisMonth<REFERRAL_RULES.bonusSubmissionCountPerMonth,sellerBonusPercent:submissionsThisMonth<REFERRAL_RULES.bonusSubmissionCountPerMonth?REFERRAL_RULES.referredSellerBonusPercent:0,referrerLifetimePercent:REFERRAL_RULES.referrerLifetimePercent};}
