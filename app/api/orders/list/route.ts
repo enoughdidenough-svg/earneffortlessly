@@ -1,0 +1,2 @@
+import {NextResponse} from 'next/server';import{createServerSupabase}from'@/lib/supabase';
+export async function GET(){const s=await createServerSupabase();const{data:{user}}=await s.auth.getUser();if(!user)return NextResponse.json({error:'Sign in required'},{status:401});const{data,error}=await s.from('orders').select('id,product_id,seller_id,amount,currency,status,payment_method,payment_reference,created_at,products(title)').eq('buyer_id',user.id).order('created_at',{ascending:false}).limit(200);return NextResponse.json({data:data||[],error:error?.message});}
