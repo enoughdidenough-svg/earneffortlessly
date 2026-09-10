@@ -11,6 +11,7 @@ export default async function Marketplace({ searchParams }: { searchParams: Prom
   if (q) query = query.or(`title.ilike.%${q}%,description.ilike.%${q}%,category.ilike.%${q}%,subcategory.ilike.%${q}%`);
   const category=get('category'); if(category) query=query.eq('category',category);
   const subcategory=get('subcategory'); if(subcategory) query=query.eq('subcategory',subcategory);
+  const quality=get('quality'); if(quality) query=query.eq('quality_label',quality);
   const language=get('language'); if(language) query=query.eq('language',language);
   const licenseType=get('licenseType'); if(licenseType) query=query.eq('license_type',licenseType);
   const minPrice=Number(get('minPrice')); if(Number.isFinite(minPrice)) query=query.gte('price',minPrice);
