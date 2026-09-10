@@ -1,0 +1,2 @@
+import {NextResponse} from 'next/server';import{requireAdmin,adminErrorResponse}from'@/lib/server/admin';
+export async function GET(){try{const{supabase}=await requireAdmin();const{data,error}=await supabase.from('manual_royalty_payments').select('*').order('payment_date',{ascending:false}).limit(100);return NextResponse.json({data:data||[],error:error?.message});}catch(e){return adminErrorResponse(e)}}
