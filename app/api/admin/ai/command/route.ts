@@ -1,0 +1,4 @@
+import {NextResponse} from 'next/server';
+import {requireAdmin,adminErrorResponse} from '@/lib/server/admin';
+import {parseAdminCommand} from '@/lib/ai/command-router';
+export async function POST(req:Request){try{const{supabase,user}=await requireAdmin();const b=await req.json().catch(()=>({}));const raw=String(b.command||'').trim();if(!raw)return NextResponse.json({error:'Command required'},{status:400});const parsed=parseAdminCommand(raw);const status=['ban','unban','suspend','approve','decline','rollback'].includes(parsed.intent)?'pending_approval':'queued';const{data,error}=await supabase.from('admin_commands').insert({admin_id:user.id,command:raw,parsed,status,result:{intent:parsed.intent,target:parsed.target||null}}).select('id,status,parsed').single();if(error)return NextResponse.json({error:error.message},{status:400});return NextResponse.json({ok:true,command:data});}catch(e){return adminErrorResponse(e)}}
