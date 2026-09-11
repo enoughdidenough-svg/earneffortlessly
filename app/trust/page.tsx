@@ -1,0 +1,15 @@
+import {createServerSupabase} from '@/lib/supabase-server'
+
+function label(status:string|null|undefined){const s=String(status||'unknown').toLowerCase();if(['healthy','running','ok'].includes(s))return 'Operational';if(['paused','offline'].includes(s))return 'Paused';if(['error','failed','critical'].includes(s))return 'Needs attention';return 'Checking'}
+
+export default async function Trust(){
+ const s=await createServerSupabase()
+ const [{data:heartbeat},{data:incidents},{data:maintenance}] = await Promise.all([
+   s.from('ai_heartbeat').select('worker,last_run_at,last_status,runs').order('worker'),
+   s.from('site_incidents').select('component,severity,title,status,created_at').neq('status','resolved').order('created_at',{ascending:false}).limit(8),
+   s.from('maintenance_state').select('enabled,message,updated_at').eq('id',true).maybeSingle()
+ ])
+ return <main className="container"><section className="hero compact"><div className="eyebrow">TRUST CENTER</div><h1>See what the marketplace is doing.</h1><p className="lead">Security, review, payment verification and delivery are designed to show their real state. No fake “all good” screen.</p></section>
+ <section className="grid grid2"><div className="card"><h2>Automation</h2><p><span className="badge">{label(heartbeat?.[0]?.last_status)}</span></p>{heartbeat?.length?<div className="stack">{heartbeat.map(h=><div className="row" key={h.worker}><div><b>{h.worker}</b><small>Last cycle: {h.last_run_at?new Date(h.last_run_at).toLocaleString():'not yet'}</small></div><span>{h.last_status||'unknown'}</span></div>)}</div>:<p className="muted">No heartbeat has been recorded yet.</p>}</div><div className="card"><h2>Maintenance</h2><p>{maintenance?.enabled?'Maintenance mode is enabled.':'Marketplace is operating normally.'}</p>{maintenance?.enabled&&<div className="notice">{maintenance.message}</div>}</div></section>
+ <section className="section"><div className="section-head"><div><div className="eyebrow">INCIDENTS</div><h2>Visible problems</h2></div></div>{incidents?.length?<div className="stack">{incidents.map(i=><div className="card" key={`${i.component}-${i.created_at}`}><div className="eyebrow">{i.severity} · {i.component}</div><h3>{i.title}</h3><p className="muted">Status: {i.status}</p></div>)}</div>:<div className="notice">No unresolved site incidents are currently reported.</div>}</section></main>
+}
