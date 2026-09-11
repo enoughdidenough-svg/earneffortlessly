@@ -7,6 +7,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: https://brcvmkvhialvbqazyxct.supabase.co
+      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: sb_publishable_LHK4KQJW0rMvSsW19bgiAg_f9X2Idt9
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
