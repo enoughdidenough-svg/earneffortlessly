@@ -1,0 +1,6 @@
+import Link from 'next/link'
+
+const statusText:Record<string,string>={pending:'Waiting for verification',payment_submitted:'Payment received for review',verifying:'Verifying payment',paid:'Ready to use',active:'Active',submitted:'Under review',queued:'Queued for inspection',analyzing:'AI is checking this',changes_requested:'Changes requested',approved:'Approved',published:'Published',rejected:'Not approved'}
+export function FriendlyStatus({status}:{status?:string|null}){const key=String(status||'').toLowerCase();return <span className="badge" title={status||undefined}>{statusText[key]||String(status||'Checking')}</span>}
+export function NextAction({title,body,href,label}:{title:string;body:string;href?:string;label?:string}){return <div className="next-action"><div><div className="eyebrow">NEXT</div><h3>{title}</h3><p>{body}</p></div>{href&&<Link className="button primary" href={href}>{label||'Continue'} →</Link>}</div>}
+export function Timeline({steps}:{steps:{title:string;body?:string;done?:boolean;active?:boolean}[]}){return <div className="timeline">{steps.map((s,i)=><div className={`timeline-step${s.done?' done':''}${s.active?' active':''}`} key={`${s.title}-${i}`}><span className="timeline-dot"/ ><div><b>{s.title}</b>{s.body&&<p>{s.body}</p>}</div></div>)}</div>}
