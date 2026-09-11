@@ -1,4 +1,4 @@
-import { createServerSupabase } from '@/lib/supabase';
+import { createServerSupabase } from '@/lib/supabase-server';
 
 export async function requireAdmin() {
   const supabase = await createServerSupabase();
