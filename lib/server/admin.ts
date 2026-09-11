@@ -4,9 +4,11 @@ export async function requireAdmin() {
   const supabase = await createServerSupabase();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error('AUTH_REQUIRED');
-  const { data: profile } = await supabase.from('profiles').select('is_admin,role,status').eq('id', user.id).single();
-  if (!profile?.is_admin || profile.status !== 'active') throw new Error('ADMIN_REQUIRED');
-  return { supabase, user, profile };
+
+  const { data: allowed, error } = await supabase.rpc('is_platform_admin');
+  if (error || allowed !== true) throw new Error('ADMIN_REQUIRED');
+
+  return { supabase, user, profile: { is_admin: true, role: 'owner', status: 'active' } };
 }
 
 export function adminErrorResponse(error: unknown) {
