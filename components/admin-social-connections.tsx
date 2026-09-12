@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { createBrowserSupabase } from '@/lib/supabase-browser';
+import { createClient } from '@/lib/supabase-browser';
 
 type Connection = { id:string; platform:string; account_id:string; page_id:string|null; access_scope:string|null; status:string; metadata:Record<string, unknown>|null; created_at:string; updated_at:string };
 type AdConnection = { id:string; platform:string; account_label:string; page_id:string|null; status:string; metadata:Record<string, unknown>|null; created_at:string; updated_at:string };
@@ -9,7 +9,7 @@ type AdConnection = { id:string; platform:string; account_label:string; page_id:
 export default function SocialConnectionsPanel({connections,adConnections}:{connections:Connection[];adConnections:AdConnection[]}) {
   const [busy,setBusy]=useState<string|null>(null);
   const [message,setMessage]=useState('');
-  const supabase=createBrowserSupabase();
+  const supabase=createClient();
 
   async function connect(functionName:string,label:string){
     setBusy(label); setMessage('');
