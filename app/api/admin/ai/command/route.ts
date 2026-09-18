@@ -30,7 +30,8 @@ export async function POST(req:Request){
     memory_key:'admin-command:'+data.id,
     importance:parsed.risky?.9:.65,
     confidence:.9,source_ref:data.id,active:true,updated_at:new Date().toISOString(),tags:['admin','ai-command']
-  },{onConflict:'user_id,memory_key'}).catch(()=>{});
+  });
+
   return NextResponse.json({ok:true,command:data});
  }catch(e){return adminErrorResponse(e)}
 }
