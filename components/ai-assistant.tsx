@@ -18,7 +18,7 @@ export default function AIAssistant() {
   const canRun = command.trim().length > 2 && !busy;
   const summary = useMemo(() => {
     if (!result) return null;
-    if (result.error) return result.error;
+    if (result.error) return { decision: 'error', confidence: '—', error: result.error };
     const decision = result.decision || 'plan';
     const confidence = typeof result.confidence === 'number' ? `${Math.round(result.confidence)}%` : '—';
     return { decision, confidence };
@@ -62,7 +62,7 @@ export default function AIAssistant() {
         <span className='muted'>No coding required.</span>
       </div>
       {summary && <div className='ai-result'>
-        <div className='ai-result-head'><strong>{summary.decision.replaceAll('_', ' ')}</strong><span>Confidence {summary.confidence}</span></div>
+        <div className='ai-result-head'><strong>{summary.decision.replaceAll('_', ' ')}</strong><span>Confidence {summary.confidence}</span></div>{summary.error && <p>{summary.error}</p>}
         {result?.risk && <p><b>Risk:</b> {result.risk}</p>}
         {result?.reasons?.length ? <div><b>Why</b><ul>{result.reasons.slice(0, 5).map((x) => <li key={x}>{x}</li>)}</ul></div> : null}
         {result?.actions?.length ? <div><b>Next steps</b><ul>{result.actions.slice(0, 5).map((x) => <li key={x}>{x}</li>)}</ul></div> : null}
